@@ -2084,3 +2084,13 @@ Number.prototype[Symbol.iterator] = function*() {
 
 ![range](images/2.jpg)
 
+## ES2016 (ES7)
+
+### Array .includes(..)
+
+// TODO: copy from slides #35, #36, #37
+
+.find and .findIndex were actually originally included in ES6, but is more useful now
+
+After finding the first match, it stops
+
