@@ -18,7 +18,7 @@ Thursday October 4, 2018
 function lookupRecord(id) {
     var otherParams = [].slice.call( arguments, 1 );
 
-    // ...
+    // ..
 }
 ```
 
@@ -62,7 +62,7 @@ function lookupRecord(id,...otherParams) {
 
 ### More examples
 
-#### Example 1
+#### Example 1 (equivalent code blocks)
 
 ```js
 var a = [1,2,3];
@@ -76,34 +76,37 @@ var b = [4,5,6];
 var c = [0,...a,...b,7]); // c = [0, 1, 2, 3, 4, 5, 6, 7]
 ```
 
-#### Example 2
+#### Example 2 (equivalent code blocks)
 
 ```js
 function foo(a,b) {
-    var c = [0].concat(a,b,[7])
+    return [0].concat(a,b,[7])
 }
+
+var a = [1,2,3];
+var b = [4,5,6];
+var c = foo(a, b); // c = [0, 1, 2, 3, 4, 5, 6, 7]
+
 ```
 
 ```js
 function foo(a,b,...c) { // spreads
-
+    // a = 1
+    // b = 2
+    // c = [3]
+    return [a,b,...c];
 }
+
+var a = [1,2,3];
+var b = [4,5,6];
+var c = [0,...a,...b,7];
+// c = [0, 1, 2, 3, 4, 5, 6, 7]
+
+var d = foo(...a); // gathers
+// d = [1, 2, 3]
 ```
 
 #### Example 3
-
-```js
-var a = [1,2,3];
-var b = [4,5,6];
-var c = [0,...a,...b,7]); // c = [0, 1, 2, 3, 4, 5, 6, 7]
-
-function foo(a,b,...c) { // spreads
-    console.log(a,b,c);
-}
-foo(...a); // gathers
-```
-
-#### Example 4
 
 An spread operator on nothing returns an empty array
 
@@ -121,7 +124,7 @@ function foo(x,y,z) {
 foo(a,b);
 ```
 
-#### Example 5
+#### Example 4
 
 ```js
 var a = [1,2,3];
@@ -139,7 +142,7 @@ foo(...c);
 
 ### Exercise 1
 
-Make the following code return true:
+#### Make the following code return true:
 
 ```js
 function foo() { }
@@ -156,7 +159,7 @@ console.log(
 );
 ```
 
-My solution:
+#### Solution:
 
 ```js
 function foo(x, y, z, ...other) {
@@ -179,9 +182,9 @@ console.log(
 );
 ```
 
-How this can be used:
+#### How this can be used:
 
-Always remove the first 2 items
+Function to always remove the first 2 items
 
 ```js
 function dump2(x, y, ...other) {
@@ -193,7 +196,7 @@ function dump2(x, y, ...other) {
 
 var a = [1, 2, 3, 4, 5]
 var b = dump2(...a);
-console.log(b); // [3, 4, 5]
+// b = [3, 4, 5]
 ```
 
 > Using the arrow functions doesn't always mean that it's better, and is more readable
