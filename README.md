@@ -2217,3 +2217,5 @@ Problems with async functions:
 * there is no way of cancelling an async function (ex. can't cancel if it is taking too long) (CAF a manual fix)
 
 
+## ES2018
+
