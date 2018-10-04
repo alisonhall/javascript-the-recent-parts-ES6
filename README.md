@@ -658,3 +658,934 @@ var y = 2;
 // x = 2
 // y = 1
 ```
+
+#### Example 16 Associative
+
+```js
+var x = 1;
+var y = 2;
+var z = 3;
+
+x = null;
+y = null;
+z = null;
+```
+
+```js
+var x = 1;
+var y = 2;
+var z = 3;
+
+x = y = z = null;
+// x = null
+// y = null
+// z = null
+```
+
+Order of operations: 
+```js
+x + y * z
+// equivalent to:
+x + (y * z)
+
+x = y = z = null;
+// equivalent to:
+x = (y = (z = null));
+```
+
+Completion results:
+![completion result](images/1.jpg)
+
+Note that the completion value of `var x = 1;` is undefined, while the completion value of `x = x + 3;` is the result of 4.
+
+```js
+function foo() {
+    return [1,2,3];
+}
+var tmp = foo();
+var a = foo[0];
+var b = foo[1];
+var c = foo[2];
+// tmp = [1,2,3]
+// a = 1
+// b = 2
+// c = 3
+```
+
+```js
+function foo() {
+    return [1,2,3];
+}
+var a,b,c, tmp;
+a = (tmp = foo())[0];
+// tmp = [1,2,3]
+// a = [1]
+```
+
+```js
+function foo() {
+    return [1,2,3];
+}
+
+var a, b, c, tmp;
+[a,b,c] = tmp = foo();
+// a = 1
+// b = 2
+// c = 3
+// tmp = [1,2,3]
+```
+
+```js
+function foo() {
+    return [1,2,3];
+}
+
+var a, b, c, tmp;
+tmp = [a,b,c] foo();
+// tmp = [1,2,3]
+// a = 1
+// b = 2
+```
+
+```js
+function foo() {
+    return [1,2,[3,4,5]];
+}
+var tmp = foo() || [];
+var a = foo[0];
+var b = foo[1];
+var c = foo[2];
+```
+
+```js
+function foo() {
+    return [1,2,[3,4,5]];
+}
+
+var [
+    a,
+    b,
+    c
+] = foo() | [];
+```
+
+```js
+function foo() {
+    return [1,2,[3,4,5]];
+}
+var tmp = foo() || [];
+var a = foo[0];
+var b = foo[1];
+var tmp2 = tmp[2];
+var c = tmp2[0];
+var d = tmp2[1];
+```
+
+```js
+function foo() {
+    return [1,2,[3,4,5]];
+}
+
+var [
+    a,
+    b,
+    [
+        c,
+        d
+    ]
+] = foo() | [];
+```
+
+#### Example
+
+```js
+function foo() {
+    return [1,2];
+}
+var tmp = foo() || [];
+var a = foo[0]; // 1
+var b = foo[1]; // 2
+var tmp2 = tmp[2]; // undefined
+var c = tmp2[0]; // Error
+var d = tmp2[1]; // Error
+```
+
+```js
+function foo() {
+    return [1,2];
+}
+var tmp = foo() || [];
+var a = foo[0];
+var b = foo[1];
+var tmp2 = tmp[2] !== undefined ? tmp[2] : [];
+var c = tmp2[0]; // undefined
+var d = tmp2[1]; // undefined
+```
+
+```js
+function foo() {
+    return [1,2];
+}
+
+var [
+    a,
+    b,
+    [
+        c,
+        d
+    ] = []
+] = foo() | [];
+// a = 1
+// b = 2
+// c = undefined
+// d = undefined
+```
+
+#### Example
+
+```js
+function foo(x) {
+    // x = 42
+}
+
+foo(42);
+```
+
+```js
+function foo(tmp) {
+    var x = tmp[0]; // x = 3
+    var y = tmp[1]; // y = 4
+}
+
+foo([3,4]);
+```
+
+```js
+function foo([x,y]) {
+
+}
+foo([3,4]);
+```
+
+```js
+function foo([x,y]) {
+
+}
+foo(); // Error
+```
+
+```js
+function foo([x = 1,y = 2]) {
+
+}
+foo();
+```
+
+```js
+function foo(tmp) {
+    var tmp = tmp !== undefined ? tmp : [];
+    var x = tmp[0]; // undefined
+    var y = tmp[1]; // undefined
+}
+foo([]);
+```
+
+```js
+function foo([x,y] = [2,3]) {
+    // x = undefined
+    // y = undefined
+}
+foo([]);
+```
+
+```js
+function foo(tmp) {
+    var tmp = tmp !== undefined ? tmp : [];
+    var x = tmp[0] !== undefined ? tmp[0] : 2; // x = 2
+    var y = tmp[1] !== undefined ? tmp[1] : 3; // y = 3
+}
+foo([]);
+```
+
+```js
+function foo([x = 2,y = 3]) {
+    // x = 2
+    // y = 3
+}
+foo([]);
+```
+
+> Use a linter (ex. ESLint) to make sure you remember to set the default for gracefully handle errors
+
+### Object Destructuring
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3};
+}
+
+var tmp = foo() | {};
+var a = tmp.a;
+var b = tmp.b;
+var c = tmp.c;
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3};
+}
+
+var {
+    a: a,
+    b: b,
+    c: c
+} = foo() || {};
+```
+
+Order doesn't matter
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3};
+}
+
+var {
+    b: b,
+    a: a,
+    c: c
+} = foo() || {};
+```
+
+Shorthand for if the source and target are the same
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3};
+}
+
+var {
+    a,
+    b,
+    c
+} = foo() || {};
+```
+
+#### Example
+
+```js
+var o = {
+    prop: val,
+    target: source
+};
+
+var {
+    source: target
+} = o;
+```
+
+The property name always shows up on the left
+```js
+var o = {
+    prop: val,
+    target: source
+};
+
+var {
+    prop: val,
+    source: target
+} = o;
+```
+
+```js
+var o = {
+    prop: val
+};
+
+var {
+    prop: val
+} = o;
+```
+
+#### Example
+
+```js
+function foo() {
+    return { a: 1, b: 2};
+}
+
+var tmp = foo() | {};
+var a = tmp.a;
+var b = tmp.b;
+var c = tmp.c; // undefined
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2};
+}
+
+var {
+    a,
+    b,
+    c
+} = foo() || {};
+// c = undefined
+```
+
+#### Example: setting defaults
+
+```js
+function foo() {
+    return { a: 1, b: 2};
+}
+
+var tmp = foo() | {};
+var a = tmp.a;
+var b = tmp.b;
+var c = tmp.c !== undefined ? tmp.c : 3;
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2};
+}
+
+var {
+    a,
+    b,
+    c: c = 3
+} = foo() || {};
+```
+
+#### Example: setting defaults
+
+```js
+function foo() {
+    return { a: 1, b: 2};
+}
+
+var tmp = foo() | {};
+var a = tmp.a;
+var b = tmp.b;
+var CCC = tmp.c !== undefined ? tmp.c : 3;
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2};
+}
+
+var {
+    a,
+    b,
+    c: CCC = 3 // do we have a c property, if it is undefined set CCC to 3, if c is present set CCC to c
+} = foo() || {};
+```
+
+#### Example: unknown properties
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4};
+}
+
+var tmp = foo() | {};
+var a = tmp.a;
+var b = tmp.b;
+var other = {
+    c: tmp.c,
+    d: tmp.d
+}
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4};
+}
+
+var {
+    a,
+    b,
+    ...other
+} = foo() || {};
+```
+
+### Object Spread
+
+```js
+var o = { x: 1, y: 2, z: 3 };
+
+var p = { ...o, w: 4};
+// w = 4
+```
+
+```js
+var o = { x: 1, y: 2, z: 3, w: 6 };
+
+var p = { w: 4, ...o };
+// w = 6
+```
+
+### Shallow copying
+
+```js
+var x = [...y];
+var x = {...y};
+```
+
+#### Example
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+var tmp = foo() || {};
+o.x = tmp.a;
+o.b = tmp.b;
+o.CCC = tmp.c;
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+{
+    a: o.x, // Syntax Error due to the brackets making it a block statement
+    b: o.b,
+    c: o.CCC
+} = foo() | {};
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+var{
+    a: x,
+    b: b,
+    c: CCC
+} = foo() | {};
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+({
+    a: o.x,
+    b: o.b,
+    c: o.CCC
+} = foo() | {});
+```
+
+#### Example
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+var tmp = foo() || {};
+o.x = tmp.a;
+o.b = tmp.b;
+o.w = tmp.b;
+o.CCC = tmp.c;
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+({
+    a: o.x,
+    b: o.b,
+    b: o.w,
+    c: o.CCC
+} = foo() | {});
+```
+
+#### Example
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+({
+    a: o.x,
+    b: o.b = 2,
+    b: o.w = 3,
+    c: o.CCC
+} = foo() | {});
+```
+
+#### Example
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+function bar() { return }
+
+var o = {};
+
+({
+    a: o.x,
+    b: o.b = 2,
+    b: o.w = bar(), // can use a valid expression
+    c: o.CCC
+} = foo() | {});
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+({
+    a: o.x,
+    b: o.b = 2,
+    b: o.w = bar(b), // Error, since bar doesn't know where b is coming from
+    c: o.CCC
+} = foo() | {});
+```
+
+#### Example
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+var OBJ;
+
+OBJ = {
+    a: o.x,
+    b: o.b = 2,
+    b: o.w = 3,
+    c: o.CCC
+} = foo() | {};
+```
+
+```js
+function foo() {
+    return { a: 1, b: 2, c: 3, d: 4 };
+}
+
+var o = {};
+
+var OBJ = {
+    a: o.x,
+    b: o.b = 2,
+    b: o.w = 3,
+    c: o.CCC
+} = foo() | {};
+```
+
+
+#### Example
+
+```js
+function foo() {
+    return {
+        a: 1,
+        b: {
+            c: 3,
+            d: 4
+        },
+        e: 5
+    }
+}
+
+var tmp = foo() || {};
+var tmp2 = tmp.b;
+var c = tmp2.c;
+var d = tmp2.d;
+```
+
+```js
+function foo() {
+    return {
+        a: 1,
+        b: {
+            c: 3,
+            d: 4
+        },
+        e: 5
+    }
+}
+
+var {
+    b: {
+        c,
+        d
+    }
+} = foo() | {};
+```
+
+```js
+function foo() {
+    return {
+        a: 1,
+        b: {
+            c: 3,
+            d: 4
+        },
+        e: 5
+    }
+}
+
+var {
+    b,
+    b: {
+        c,
+        d
+    }
+} = foo() | {};
+```
+
+#### Example
+
+```js
+function foo() {
+    return {
+        a: 1,
+        e: 5
+    }
+}
+
+var tmp = foo() || {};
+var tmp2 = tmp.b; // undefined
+var c = tmp2.c; // Error
+var d = tmp2.d;
+```
+
+```js
+function foo() {
+    return {
+        a: 1,
+        e: 5
+    }
+}
+
+var {
+    b,
+    b: {
+        c, // Error
+        d
+    }
+} = foo() | {};
+```
+
+#### Example
+
+```js
+function foo() {
+    return {
+        a: 1,
+        e: 5
+    }
+}
+
+var tmp = foo() || {};
+var tmp2 = tmp.b !== undefined ? tmp.b || {};;
+var c = tmp2.c; // undefined
+var d = tmp2.d;
+```
+
+```js
+function foo() {
+    return {
+        a: 1,
+        e: 5
+    }
+}
+
+var {
+    b,
+    b: {
+        c,
+        d
+    } = {}
+} = foo() | {};
+```
+
+#### Example
+
+```js
+function foo({ x } = {}) {
+    // ..
+}
+
+foo({ x: 3 });
+```
+
+#### Example (named arguments)
+
+```js
+function foo(x,y,z,w,r,e,f,g) {
+    // ..
+}
+
+foo(@r = 3); // Named arguments feature not in JavaScript
+```
+
+```js
+function foo({ x,y,z,w,r,e,f,g } = {}) {
+    // ..
+}
+
+foo({ w: 3, y: 2 });
+```
+
+#### Example (passing booleans)
+
+```js
+function foo({ x,y,z,w,r,e,f,g,updateStatus } = {}) {
+    // ..
+}
+
+foo({ w: 3, y: 2 });
+
+bar(/*updateStatus=*/true);
+```
+
+>You still need to remember the names of the object keys, but you can decide on a common naming scheme like:
+>
+>cb for callbacks
+>
+>v for values
+>
+>etc.
+
+
+
+### Destructuring and Restructuring
+
+```js
+// most common approach, using extend(..)
+
+var defaults = {
+  url: "http://some.base.url/api",
+  method: "post",
+  headers: [
+    "Content-Type: text/plain"
+  ]
+};
+
+console.log(defaults);
+
+// ************************
+
+var settings = {
+  url: "http://some.other.url/",
+  data: 42,
+  callback: function(resp) { /* .. */ }
+};
+
+// underscore extend(..)
+ajax( _.extend({},defaults,settings) );
+
+// or: ajax( Object.assign({},defaults,settings) );
+```
+
+```js
+// instead, IMO better using destructuring and defaults
+
+var defaults = ajaxOptions();  // with no arguments, returns the defaults as an object if necessary
+
+console.log(defaults);
+
+// ************************
+
+var settings = {
+  url: "http://some.other.url/",
+  data: 42,
+  callback: function(resp) { /* .. */ }
+};
+
+ajax( ajaxOptions( settings ) );  // with an argument, mixes in the settings w/ the defaults
+
+// ************************
+
+function ajaxOptions({
+   url = "http://some.base.url/api",
+   method = "post",
+   data,
+   callback,
+   headers: [
+     headers0 = "Content-Type: text/plain",
+     ...otherHeaders
+   ] = []
+} = {}) {
+   return {
+     url, method, data, callback,
+     headers: [
+       headers0,
+       ...otherHeaders
+     ]
+   };
+}
+```
+
+Using gathering (has less documentation):
+
+```js
+// instead, IMO better using destructuring and defaults
+
+var defaults = ajaxOptions();  // with no arguments, returns the defaults as an object if necessary
+
+console.log(defaults);
+
+// ************************
+
+var settings = {
+  url: "http://some.other.url/",
+  data: 42,
+  callback: function(resp) { /* .. */ }
+};
+
+ajax( ajaxOptions( settings ) );  // with an argument, mixes in the settings w/ the defaults
+
+// ************************
+
+function ajaxOptions({
+   url = "http://some.base.url/api",
+   method = "post",
+   headers: [
+     headers0 = "Content-Type: text/plain",
+     ...otherHeaders
+   ] = [],
+   ...other
+} = {}) {
+   return {
+     url, method, data, callback,
+     headers: [
+       headers0,
+       ...otherHeaders
+     ],
+     ...other
+   };
+}
+```
