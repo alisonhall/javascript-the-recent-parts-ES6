@@ -2094,3 +2094,126 @@ Number.prototype[Symbol.iterator] = function*() {
 
 After finding the first match, it stops
 
+## ES2017 (ES8)
+
+### String padding
+
+// TODO: copy from slides #40, #41
+
+## Async .. Await
+
+ES6 allowed Promises, but there are a lot of edge cases with Promise chains
+
+// TODO: copy from slides #43
+
+ES6 can also do sync-async with generators instead, but you need a runner library (ex. Bluebird)
+
+// TODO: copy from slides #44
+
+ES2017 supports async functions
+
+It is similar to the generator version, but use 'async' instead of 'runner', and 'await' instead of 'yield'.
+
+// TODO: copy from slides #45
+
+You can also wrap this whole thing in a try-catch statement, which will catch asynchronous errors synchronously
+
+### Exercise 5
+
+```js
+function fakeAjax(url,cb) {
+    var fake_responses = {
+        "file1": "The first text",
+        "file2": "The middle text",
+        "file3": "The last text"
+    };
+    var randomDelay = (Math.round(Math.random() * 1E4) % 8000) + 1000;
+
+    console.log("Requesting: " + url);
+
+    setTimeout(function(){
+        cb(fake_responses[url]);
+    },randomDelay);
+}
+
+function output(text) {
+    console.log(text);
+}
+
+// **************************************
+
+function getFile(file) {
+    return new Promise(function(resolve){
+        fakeAjax(file,resolve);
+    });
+}
+
+async function loadFiles(files) {
+    // request all files concurrently
+
+    // print in order, sequentially
+}
+
+loadFiles(["file1","file2","file3"]);
+
+```
+
+Solution
+
+```js
+function fakeAjax(url,cb) {
+    var fake_responses = {
+        "file1": "The first text",
+        "file2": "The middle text",
+        "file3": "The last text"
+    };
+    var randomDelay = (Math.round(Math.random() * 1E4) % 8000) + 1000;
+
+    console.log("Requesting: " + url);
+
+    setTimeout(function(){
+        cb(fake_responses[url]);
+    },randomDelay);
+}
+
+function output(text) {
+    console.log(text);
+}
+
+// **************************************
+
+function getFile(file) {
+    return new Promise(function(resolve){
+        fakeAjax(file,resolve);
+    });
+}
+
+async function loadFiles(files) {
+    // request all files concurrently
+    var prs = files.map(getFile);
+
+    // print in order, sequentially
+    for (let pr of prs) {
+        output(await pr);
+    }
+}
+
+loadFiles(["file1","file2","file3"]);
+
+// Requesting: file1
+// Requesting: file2
+// Requesting: file3
+// The first text
+// The middle text
+// The last text
+```
+
+> A forEach loop wouldn't work instead of the for loop, because a forEach wouldn't output them sequentially
+
+Problems with async functions:
+
+* async only knows how to handle Promises (FASY a manual fix)
+* scheduling/starvation: if there is a concurrent system, one part of the code might take over all of the rest of it, which stops the rest of the code from running
+* there is no way of cancelling an async function (ex. can't cancel if it is taking too long) (CAF a manual fix)
+
+
