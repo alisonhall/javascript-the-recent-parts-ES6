@@ -1589,3 +1589,150 @@ function ajaxOptions({
    };
 }
 ```
+
+#### Example
+
+```js
+var str = "Hello world";
+
+var re = /l(l.)/;
+var x = str.match(re); // ["llo","lo"]
+
+```
+
+```js
+var str = "Hello world";
+
+var re = /l(l.)/;
+var [,word] = str.match(re); // word = "lo"
+
+```
+
+### Exercise 2
+
+#### Fix the following code to get it to return true
+
+```js
+var defaults = {
+    foo: 0,
+    bar: 4,
+    bam: {
+        qux: 0,
+        qam: 14
+    }
+};
+
+ajax("http://fun.tld",handleResponse);
+
+
+// *******************************************************
+
+function handleResponse(/* destructuring here */) {
+    checkData({
+        /* restructuring here */
+    });
+}
+
+function ajax(url,cb) {
+    // fake ajax response:
+    cb({
+        foo: 2,
+        baz: [ 6, 8, 10 ],
+        bam: {
+            qux: 12
+        }
+    });
+}
+
+function checkData(data) {
+    console.log(
+        56 === (
+            data.foo +
+            data.bar +
+            data.baz[0] + data.baz[1] + data.baz[2] +
+            data.bam.qux +
+            data.bam.qam
+        )
+    );
+}
+
+```
+
+#### Solution
+
+```js
+var defaults = {
+    foo: 0,
+    bar: 4,
+    bam: {
+        qux: 0,
+        qam: 14
+    }
+};
+
+ajax("http://fun.tld",handleResponse);
+
+
+// *******************************************************
+
+function handleResponse({
+    foo = 0,
+    bar = 4,
+    baz,
+    bam: {
+        qux = 0,
+        qam = 14
+    } = {}
+} = {}) {
+
+    checkData({
+        foo,
+        bar,
+        baz,
+        bam: {
+            qux,
+            qam
+        }
+    });
+}
+
+function ajax(url,cb) {
+    // fake ajax response:
+    cb({
+        foo: 2,
+        baz: [ 6, 8, 10 ],
+        bam: {
+            qux: 12
+        }
+    });
+}
+
+function checkData(data) {
+    console.log(data);
+    console.log(
+        56 === (
+            data.foo +
+            data.bar +
+            data.baz[0] + data.baz[1] + data.baz[2] +
+            data.bam.qux +
+            data.bam.qam
+        )
+    );
+}
+```
+
+#### Ideal way of doing defaults
+
+```js
+function ajaxOptions({
+    foo = 0,
+    bar = 4,
+    baz,
+    bam: {
+        qux = 0,
+        qam = 14
+    } = {}
+} = {}) {
+    // ..
+}
+```
